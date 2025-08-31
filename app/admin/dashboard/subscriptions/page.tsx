@@ -11,8 +11,16 @@ export const metadata = {
   description: "Manage subscription plans for your AI character platform",
 }
 
+// Avoid static prerendering; fetch at request time to prevent build-time failures
+export const dynamic = "force-dynamic"
+export const revalidate = 0
+
 export default async function SubscriptionsPage() {
-  const plans = await getSubscriptionPlans()
+  // Gracefully handle fetch failures to avoid crashing the page/build
+  const plans = await getSubscriptionPlans().catch((err) => {
+    console.error("Failed to load subscription plans:", err)
+    return []
+  })
 
   return (
     <div className="space-y-6">
