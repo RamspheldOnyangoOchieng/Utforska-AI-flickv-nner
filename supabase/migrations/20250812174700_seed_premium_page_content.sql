@@ -1,0 +1,18 @@
+INSERT INTO premium_page_content (section, content) VALUES
+('main_title', 'Buy Tokens'),
+('main_subtitle', '100% anonymous. You can cancel anytime.'),
+('token_system_title', 'Token System'),
+('pay_as_you_go_title', 'Pay As You Go'),
+('purchase_intro', 'Purchase tokens to generate images. <span class="text-[#FF8C00] font-semibold">5 tokens per image.</span>'),
+('how_tokens_work_title', 'How Tokens Work'),
+('how_tokens_work_item_1', 'Each image generation costs 5 tokens'),
+('how_tokens_work_item_2', 'Tokens never expire'),
+('how_tokens_work_item_3', 'Buy in bulk for better value'),
+('select_package_title', 'Select Token Package'),
+('value_comparison_title', 'Value Comparison'),
+('why_buy_tokens_title', 'Why Buy Tokens?'),
+('why_buy_tokens_item_1', 'No recurring payments'),
+('why_buy_tokens_item_2', 'Pay only for what you need'),
+('why_buy_tokens_item_3', 'Higher quality image generation'),
+('security_badge_1', 'Antivirus Secured'),
+('security_badge_2', 'Privacy in bank statement');

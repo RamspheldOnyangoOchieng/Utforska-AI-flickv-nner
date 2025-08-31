@@ -1,0 +1,67 @@
+/* Global button styles to ensure visibility and accessibility */
+
+/* Ensure buttons have proper padding and are not too small for touch targets */
+/* Use higher specificity and !important on padding/radius to win over utility classes like rounded-full */
+button,
+.btn,
+[role="button"],
+button.btn,
+[role="button"].btn {
+  min-height: 2.5rem;
+  min-width: 2.5rem;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.375rem !important;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: visible; /* Prevent text overflow issues */
+}
+
+/* Ensure icon buttons have proper sizing */
+button.icon-only,
+.btn-icon,
+.btn.btn-icon,
+[role="button"].btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem !important;
+}
+
+/* Improve focus visibility for accessibility */
+button:focus-visible,
+.btn:focus-visible,
+[role="button"]:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+/* Ensure disabled buttons have clear visual indication */
+button:disabled,
+.btn:disabled,
+[role="button"][aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Ensure buttons in mobile views are properly sized */
+@media (max-width: 640px) {
+  button,
+  .btn,
+  [role="button"] {
+    padding: 0.625rem 1rem; /* Slightly larger padding on mobile for touch */
+  }
+}
+
+/* Ensure proper spacing between buttons in groups */
+.button-group button:not(:last-child),
+.button-group .btn:not(:last-child) {
+  margin-right: 0.5rem;
+}
+
+/* Vertical button groups */
+.button-group-vertical button:not(:last-child),
+.button-group-vertical .btn:not(:last-child) {
+  margin-bottom: 0.5rem;
+  margin-right: 0;
+}
