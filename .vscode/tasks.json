@@ -11,6 +11,13 @@
 				"$tsc"
 			],
 			"args": []
+		},
+		{
+			"label": "Start Next.js App",
+			"type": "shell",
+			"command": "pnpm dev",
+			"isBackground": true,
+			"group": "build"
 		}
 	]
 }
