@@ -34,3 +34,46 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# additional package manager lockfiles (use pnpm)
+package-lock.json
+yarn.lock
+
+# pnpm
+pnpm-debug.log*
+.pnpm-store
+
+# general logs
+*.log
+logs
+*.pid
+*.seed
+*.pid.lock
+
+# caches and build tools
+.turbo
+.swc
+.cache
+.eslintcache
+/dist
+
+# editors/IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS artifacts
+Thumbs.db
+.Spotlight-V100
+.Trashes
+Icon?
+
+# test artifacts
+.nyc_output
+junit.xml
+playwright-report/
+test-results/
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
