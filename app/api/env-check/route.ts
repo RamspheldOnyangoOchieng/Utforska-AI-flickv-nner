@@ -1,6 +1,25 @@
 import { NextResponse } from "next/server"
 
 export async function GET() {
+  // Only return non-sensitive, high-level information
+  const keys = [
+    "NEXT_PUBLIC_SUPABASE_URL",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    "SUPABASE_URL",
+    "SUPABASE_ANON_KEY",
+  ] as const
+
+  const info = Object.fromEntries(
+    keys.map((k) => [k, process.env[k] ? (k.includes("KEY") ? "present" : process.env[k]) : "missing"])
+  )
+
+  return NextResponse.json({
+    env: info,
+  })
+}
+import { NextResponse } from "next/server"
+
+export async function GET() {
   const mask = (v?: string | null) => (v ? `${v.slice(0, 8)}… (${v.length} chars)` : null)
 
   const body = {
