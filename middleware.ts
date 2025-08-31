@@ -6,7 +6,14 @@ import type { Database } from '@/types/supabase'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient<Database>({ req, res })
+  // Explicitly pass Supabase config to avoid reliance on env discovery in edge/middleware
+  const supabase = createMiddlewareClient<Database>({
+    req,
+    res,
+  }, {
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "",
+    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "",
+  })
 
   try {
     // Get the current session
