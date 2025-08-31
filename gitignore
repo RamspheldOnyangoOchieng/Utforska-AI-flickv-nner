@@ -77,3 +77,6 @@ test-results/
 cypress/videos/
 cypress/screenshots/
 cypress/downloads/
+
+# tooling/config folders that may contain credentials
+.kilocode/
