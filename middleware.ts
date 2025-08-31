@@ -6,13 +6,21 @@ import type { Database } from '@/types/supabase'
 
 export async function middleware(req: NextRequest) {
   const res = NextResponse.next()
+  // Read env at build-time (inlined by Next). Guard missing values to avoid crashes during dev/build.
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error(
+      "Middleware Supabase env missing. Define NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (or SUPABASE_URL/SUPABASE_ANON_KEY).",
+    )
+    return res
+  }
+
   // Explicitly pass Supabase config to avoid reliance on env discovery in edge/middleware
-  const supabase = createMiddlewareClient<Database>({
-    req,
-    res,
-  }, {
-    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || "",
-    supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "",
+  const supabase = createMiddlewareClient<Database>({ req, res }, {
+    supabaseUrl,
+    supabaseKey,
   })
 
   try {

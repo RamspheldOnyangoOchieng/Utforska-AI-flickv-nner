@@ -1,48 +1,25 @@
 import { NextResponse } from "next/server"
 
 export async function GET() {
-  // Only return non-sensitive, high-level information
-  const keys = [
-    "NEXT_PUBLIC_SUPABASE_URL",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    "SUPABASE_URL",
-    "SUPABASE_ANON_KEY",
-  ] as const
-
-  const info = Object.fromEntries(
-    keys.map((k) => [k, process.env[k] ? (k.includes("KEY") ? "present" : process.env[k]) : "missing"])
-  )
-
-  return NextResponse.json({
-    env: info,
-  })
-}
-import { NextResponse } from "next/server"
-
-export async function GET() {
   const mask = (v?: string | null) => (v ? `${v.slice(0, 8)}… (${v.length} chars)` : null)
 
   const body = {
     nodeEnv: process.env.NODE_ENV,
-    // Public envs (safe to expose structure)
+    // Public envs (safe to display masked)
     NEXT_PUBLIC_SUPABASE_URL: mask(process.env.NEXT_PUBLIC_SUPABASE_URL || null),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: mask(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || null),
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: mask(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || null),
     // Server-only envs (presence only)
+    has_SUPABASE_URL: Boolean(process.env.SUPABASE_URL),
+    has_SUPABASE_ANON_KEY: Boolean(process.env.SUPABASE_ANON_KEY),
     has_SUPABASE_SERVICE_ROLE_KEY: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-    has_STRIPE_SECRET_KEY: Boolean(process.env.STRIPE_SECRET_KEY),
-    has_STRIPE_WEBHOOK_SECRET: Boolean(process.env.STRIPE_WEBHOOK_SECRET),
-    // File origin hint (Next loads .env.local > .env.* > .env). Can't know source, but echo presence.
-    loadedKeys: Object.keys(process.env).filter((k) =>
-      [
-        "NEXT_PUBLIC_SUPABASE_URL",
-        "NEXT_PUBLIC_SUPABASE_ANON_KEY",
-        "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY",
-        "SUPABASE_SERVICE_ROLE_KEY",
-        "STRIPE_SECRET_KEY",
-        "STRIPE_WEBHOOK_SECRET",
-      ].includes(k),
-    ),
+    // Helpful echo of which of the above keys are present
+    presentKeys: [
+      ...(process.env.NEXT_PUBLIC_SUPABASE_URL ? ["NEXT_PUBLIC_SUPABASE_URL"] : []),
+      ...(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? ["NEXT_PUBLIC_SUPABASE_ANON_KEY"] : []),
+      ...(process.env.SUPABASE_URL ? ["SUPABASE_URL"] : []),
+      ...(process.env.SUPABASE_ANON_KEY ? ["SUPABASE_ANON_KEY"] : []),
+      ...(process.env.SUPABASE_SERVICE_ROLE_KEY ? ["SUPABASE_SERVICE_ROLE_KEY"] : []),
+    ],
   }
 
   return NextResponse.json(body)
