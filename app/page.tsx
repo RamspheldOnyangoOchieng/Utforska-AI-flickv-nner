@@ -71,58 +71,6 @@ export default function Home() {
       <main className="flex-1">
   {/* Featured Promotional Banner */}
         <PromotionalBanner />
-  {/* Anchor sections for footer navigation now visible */}
-  <section id="how-it-works" className="mx-auto max-w-5xl px-4 md:px-6 py-12 scroll-mt-24">
-    <h2 className="text-3xl font-bold mb-4">Hur det fungerar</h2>
-    <p className="text-muted-foreground leading-relaxed mb-4">Skapa ett konto, utforska karaktärer eller generera din egen. Börja chatta direkt – konversationer utvecklas dynamiskt och din AI minns preferenser när du återkommer.</p>
-    <ol className="list-decimal list-inside space-y-2 text-sm md:text-base">
-      <li>Registrera dig eller logga in.</li>
-      <li>Välj eller skapa en AI-karaktär.</li>
-      <li>Chatta, generera bilder eller be om röst/video.</li>
-      <li>Spara favoriter och anpassa personligheten.</li>
-      <li>Uppgradera för obegränsade och snabbare interaktioner.</li>
-    </ol>
-  </section>
-  <section id="roadmap" className="mx-auto max-w-5xl px-4 md:px-6 py-12 border-t border-border scroll-mt-24">
-    <h2 className="text-3xl font-bold mb-4">Roadmap</h2>
-    <ul className="space-y-3 text-sm md:text-base text-muted-foreground">
-      <li><span className="font-medium text-foreground">Q1:</span> Förbättrad röstchatt & adaptivt minne.</li>
-      <li><span className="font-medium text-foreground">Q2:</span> Video-avatar rendering & förbättrad moderation.</li>
-      <li><span className="font-medium text-foreground">Q3:</span> Realtids flerpartschat & mobilappar.</li>
-      <li><span className="font-medium text-foreground">Q4:</span> Offline-läge och privat edge-inferens.</li>
-    </ul>
-  </section>
-  <section id="guide" className="mx-auto max-w-5xl px-4 md:px-6 py-12 border-t border-border scroll-mt-24">
-    <h2 className="text-3xl font-bold mb-4">Guide</h2>
-    <p className="text-muted-foreground mb-4">Snabbstart för nya användare. Så här får du ut mest av plattformen:</p>
-    <div className="grid md:grid-cols-2 gap-6 text-sm md:text-base">
-      <div>
-        <h3 className="font-semibold mb-2">Chatta smart</h3>
-        <p>Var specifik i dina önskemål. Be om stil, ton eller scenario för mer träffsäkra svar.</p>
-      </div>
-      <div>
-        <h3 className="font-semibold mb-2">Säkra interaktioner</h3>
-        <p>Rapportera olämpligt innehåll. Våra filter skyddar men feedback förbättrar allt.</p>
-      </div>
-      <div>
-        <h3 className="font-semibold mb-2">Generera bilder</h3>
-        <p>Använd korta tydliga fraser. Kombinera attribut ("mjuk belysning", "porträtt", "anime-stil").</p>
-      </div>
-      <div>
-        <h3 className="font-semibold mb-2">Personalisera</h3>
-        <p>Justera personlighet och bakgrund för att förbättra konsekvens i dialogen över tid.</p>
-      </div>
-    </div>
-  </section>
-  <section id="complaints" className="mx-auto max-w-5xl px-4 md:px-6 py-12 border-t border-border scroll-mt-24">
-    <h2 className="text-3xl font-bold mb-4">Klagomål & Innehållsborttagning</h2>
-    <p className="text-muted-foreground mb-6">Vill du rapportera ett problem, felaktigt innehåll eller begära borttagning? Kontakta oss så hanterar vi ärendet skyndsamt.</p>
-    <div className="space-y-2 text-sm md:text-base">
-      <p>Email: <a href="mailto:support@dintyp.se" className="text-primary hover:underline">support@dintyp.se</a></p>
-      <p>Ange länk/ID för innehållet och kort beskrivning av problemet.</p>
-      <p>Akuta ärenden (säkerhet/missbruk) prioriteras inom 24 timmar.</p>
-    </div>
-  </section>
 
         <div className="mt-6 mb-4 px-4 md:px-6 lg:px-8 max-w-7xl mx-auto">
           <h2 className="text-2xl font-bold">
@@ -141,6 +89,59 @@ export default function Home() {
 
         {/* Add the Companion Experience Section */}
         <CompanionExperienceSection />
+
+        {/* Anchor sections moved to bottom just before footer for better layout */}
+        <section id="how-it-works" className="mx-auto max-w-5xl px-4 md:px-6 py-20 border-t border-border scroll-mt-24">
+          <h2 className="text-3xl font-bold mb-4">Hur det fungerar</h2>
+          <p className="text-muted-foreground leading-relaxed mb-4">Skapa ett konto, utforska karaktärer eller generera din egen. Börja chatta direkt – konversationer utvecklas dynamiskt och din AI minns preferenser när du återkommer.</p>
+          <ol className="list-decimal list-inside space-y-2 text-sm md:text-base">
+            <li>Registrera dig eller logga in.</li>
+            <li>Välj eller skapa en AI-karaktär.</li>
+            <li>Chatta, generera bilder eller be om röst/video.</li>
+            <li>Spara favoriter och anpassa personligheten.</li>
+            <li>Uppgradera för obegränsade och snabbare interaktioner.</li>
+          </ol>
+        </section>
+        <section id="roadmap" className="mx-auto max-w-5xl px-4 md:px-6 py-20 border-t border-border scroll-mt-24">
+          <h2 className="text-3xl font-bold mb-4">Roadmap</h2>
+            <ul className="space-y-3 text-sm md:text-base text-muted-foreground">
+              <li><span className="font-medium text-foreground">Q1:</span> Förbättrad röstchatt & adaptivt minne.</li>
+              <li><span className="font-medium text-foreground">Q2:</span> Video-avatar rendering & förbättrad moderation.</li>
+              <li><span className="font-medium text-foreground">Q3:</span> Realtids flerpartschat & mobilappar.</li>
+              <li><span className="font-medium text-foreground">Q4:</span> Offline-läge och privat edge-inferens.</li>
+            </ul>
+        </section>
+        <section id="guide" className="mx-auto max-w-5xl px-4 md:px-6 py-20 border-t border-border scroll-mt-24">
+          <h2 className="text-3xl font-bold mb-4">Guide</h2>
+          <p className="text-muted-foreground mb-4">Snabbstart för nya användare. Så här får du ut mest av plattformen:</p>
+          <div className="grid md:grid-cols-2 gap-6 text-sm md:text-base">
+            <div>
+              <h3 className="font-semibold mb-2">Chatta smart</h3>
+              <p>Var specifik i dina önskemål. Be om stil, ton eller scenario för mer träffsäkra svar.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Säkra interaktioner</h3>
+              <p>Rapportera olämpligt innehåll. Våra filter skyddar men feedback förbättrar allt.</p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Generera bilder</h3>
+              <p>Använd korta tydliga fraser. Kombinera attribut ("mjuk belysning", "porträtt", "anime-stil").</p>
+            </div>
+            <div>
+              <h3 className="font-semibold mb-2">Personalisera</h3>
+              <p>Justera personlighet och bakgrund för att förbättra konsekvens i dialogen över tid.</p>
+            </div>
+          </div>
+        </section>
+        <section id="complaints" className="mx-auto max-w-5xl px-4 md:px-6 py-20 border-t border-border scroll-mt-24">
+          <h2 className="text-3xl font-bold mb-4">Klagomål & Innehållsborttagning</h2>
+          <p className="text-muted-foreground mb-6">Vill du rapportera ett problem, felaktigt innehåll eller begära borttagning? Kontakta oss så hanterar vi ärendet skyndsamt.</p>
+          <div className="space-y-2 text-sm md:text-base">
+            <p>Email: <a href="mailto:support@dintyp.se" className="text-primary hover:underline">support@dintyp.se</a></p>
+            <p>Ange länk/ID för innehållet och kort beskrivning av problemet.</p>
+            <p>Akuta ärenden (säkerhet/missbruk) prioriteras inom 24 timmar.</p>
+          </div>
+        </section>
       </main>
 
       {/* Site footer is rendered globally in ClientRootLayout */}
