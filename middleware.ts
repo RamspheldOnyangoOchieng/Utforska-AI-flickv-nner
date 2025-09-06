@@ -7,17 +7,23 @@ import type { Database } from '@/types/supabase'
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl
   const res = NextResponse.next()
-  // Attach basic trace id for debugging
-  const traceId = crypto.randomUUID()
+
+  const logs: string[] = []
+  const traceId = (globalThis.crypto && 'randomUUID' in globalThis.crypto) ? (globalThis.crypto as any).randomUUID() : Math.random().toString(36).slice(2)
+  const debugParam = url.searchParams.get('__mwdebug') === '1'
+  const debugEnv = process.env.NEXT_PUBLIC_MW_DEBUG === '1'
+  const debug = debugParam || debugEnv
+
+  function log(msg: string) { logs.push(msg); if (debug) console.log('[MW]', msg) }
   res.headers.set('x-trace-id', traceId)
+  if (debug) res.headers.set('x-mw-debug', '1')
 
   try {
+    log('start')
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
-
     if (!supabaseUrl || !supabaseKey) {
-      // Fail open: allow request through rather than 500
-      console.error('Middleware: Supabase env missing – skipping auth logic')
+      log('env-missing skip auth')
       return res
     }
 
@@ -26,7 +32,7 @@ export async function middleware(req: NextRequest) {
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
     if (sessionError) {
-      console.log('Middleware session error:', sessionError.message)
+      log('session-error ' + sessionError.message)
     }
 
     // Only attempt to refresh if we have a session
@@ -34,47 +40,53 @@ export async function middleware(req: NextRequest) {
       const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
 
       if (refreshError) {
-        console.log('Middleware refresh error:', refreshError.message)
+        log('refresh-error ' + refreshError.message)
       } else if (refreshData?.session) {
-        console.log('Middleware: Session refreshed successfully')
+        log('session-refreshed')
       }
     } else {
-      console.log('Middleware: No session found, skipping refresh')
+      log('no-session')
     }
 
     // Admin route protection: restrict /admin paths to admin users only
     if (url.pathname.startsWith('/admin')) {
       if (!session) {
-        const redirectUrl = new URL('/middleware-error', req.url)
-        redirectUrl.searchParams.set('code', 'NO_SESSION')
-        redirectUrl.searchParams.set('trace', traceId)
-        return NextResponse.rewrite(redirectUrl)
+        log('admin-no-session')
+        if (debug) {
+          return new NextResponse(JSON.stringify({ code: 'NO_SESSION', traceId, logs }), { status: 401, headers: { 'content-type': 'application/json' } })
+        }
+        return res
       }
       try {
         // Fetch profile to check is_admin flag (RLS should allow selecting own row)
         const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single()
         const metaRole = (session.user.user_metadata as any)?.role
         if (!profile?.is_admin && metaRole !== 'admin') {
-          const redirectUrl = new URL('/middleware-error', req.url)
-          redirectUrl.searchParams.set('code', 'NOT_ADMIN')
-          redirectUrl.searchParams.set('trace', traceId)
-          return NextResponse.rewrite(redirectUrl)
+          log('not-admin')
+          if (debug) {
+            return new NextResponse(JSON.stringify({ code: 'NOT_ADMIN', traceId, logs, metaRole, profile }), { status: 403, headers: { 'content-type':'application/json' } })
+          }
+          return res
         }
       } catch (e) {
-        console.error('Admin check failed', e)
-        const redirectUrl = new URL('/middleware-error', req.url)
-        redirectUrl.searchParams.set('code', 'ADMIN_CHECK_FAILED')
-        redirectUrl.searchParams.set('trace', traceId)
-        return NextResponse.rewrite(redirectUrl)
+        log('admin-check-failed ' + (e as any)?.message)
+        if (debug) {
+          return new NextResponse(JSON.stringify({ code: 'ADMIN_CHECK_FAILED', traceId, error: (e as any)?.message, logs }), { status: 500, headers: { 'content-type':'application/json' } })
+        }
+        return res
       }
     }
 
     // IMPORTANT: Return the response with updated cookies
+    log('end')
+    if (debug) res.headers.set('x-mw-logs', encodeURIComponent(logs.join(';')))
     return res
   } catch (error: any) {
-    console.error('Middleware fatal error (fail-open):', traceId, error)
-    res.headers.set('x-middleware-error', error?.message || 'unknown')
-    return res // fail-open
+    logs.push('fatal ' + (error?.message || 'unknown'))
+    if (debug) {
+      return new NextResponse(JSON.stringify({ code: 'FATAL', traceId, error: error?.message, stack: error?.stack, logs }), { status: 500, headers: { 'content-type':'application/json' } })
+    }
+    return res
   }
 }
 
