@@ -4,7 +4,7 @@ import { NextResponse } from "next/server"
 
 export async function GET() {
   try {
-    const supabase = createRouteHandlerClient({ cookies: () => cookies() })
+  const supabase = createRouteHandlerClient({ cookies })
 
     // Check if user is authenticated
     const {
@@ -45,7 +45,7 @@ export async function GET() {
 export async function POST(request) {
   try {
     const { settings } = await request.json()
-    const supabase = createRouteHandlerClient({ cookies: () => cookies() })
+  const supabase = createRouteHandlerClient({ cookies })
 
     // Check if user is authenticated
     const {

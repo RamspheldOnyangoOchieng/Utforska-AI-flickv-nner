@@ -35,9 +35,8 @@ async function isUserAdmin(userId: string) {
 
 export async function GET(request: NextRequest) {
   try {
-    // Get the session using the route handler client
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+  // Get the session using the route handler client
+  const supabase = createRouteHandlerClient({ cookies })
 
     // Get the session
     const {
@@ -72,9 +71,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    // Get the session using the route handler client
-    const cookieStore = await cookies();
-    const supabase = createRouteHandlerClient({ cookies: () => cookieStore })
+  // Get the session using the route handler client
+  const supabase = createRouteHandlerClient({ cookies })
 
     // Get the session
     const {

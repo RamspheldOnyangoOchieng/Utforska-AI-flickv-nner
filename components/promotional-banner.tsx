@@ -17,11 +17,13 @@ export default function PromotionalBanner() {
 
   // Function to navigate to the next banner
   const nextBanner = () => {
+    if (activeBanners.length === 0) return
     setCurrentIndex((prevIndex) => (prevIndex + 1) % activeBanners.length)
   }
 
   // Function to navigate to the previous banner
   const prevBanner = () => {
+    if (activeBanners.length === 0) return
     setCurrentIndex((prevIndex) => (prevIndex - 1 + activeBanners.length) % activeBanners.length)
   }
 
