@@ -1,7 +1,6 @@
 import { Suspense } from "react"
 import Link from "next/link"
 import { ArrowRight, Plus } from "lucide-react"
-import { cookies } from "next/headers"
 import { createClient } from "@/lib/supabase-server"
 import { Button } from "@/components/ui/button"
 import { CharacterGrid } from "@/components/character-grid"
@@ -9,10 +8,29 @@ import { Separator } from "@/components/ui/separator"
 import { ClientChatList } from "@/components/client-chat-list"
 
 export default async function ChatPage() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  const supabase = await createClient()
 
-  const { data: characters } = await supabase.from("characters").select("*").order("created_at", { ascending: false })
+  const { data: rows } = await supabase.from("characters").select("*").order("created_at", { ascending: false })
+
+  const characters = (rows || []).map(r => ({
+    id: r.id,
+    name: r.name || 'Unnamed',
+    age: r.age || 0,
+    image: r.image_url || r.image || '',
+    description: r.description || '',
+    personality: r.personality || '',
+    occupation: r.occupation || '',
+    hobbies: r.hobbies || '',
+    body: r.body || '',
+    ethnicity: r.ethnicity || '',
+    language: r.language || 'sv',
+    relationship: r.relationship || '',
+    isNew: false,
+    createdAt: r.created_at || new Date().toISOString(),
+    systemPrompt: r.system_prompt || '',
+    category: r.category || 'All',
+    videoUrl: r.video_url || undefined,
+  }))
 
   return (
     <div className="container mx-auto py-10">
@@ -36,7 +54,7 @@ export default async function ChatPage() {
           </div>
           <Separator />
           <Suspense fallback={<div>Loading characters...</div>}>
-            <CharacterGrid characters={characters || []} />
+            <CharacterGrid characters={characters} />
           </Suspense>
         </div>
       </div>
