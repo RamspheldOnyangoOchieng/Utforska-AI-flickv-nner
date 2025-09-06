@@ -5,6 +5,7 @@ import type { NextRequest } from 'next/server'
 import type { Database } from '@/types/supabase'
 
 export async function middleware(req: NextRequest) {
+  const url = req.nextUrl
   const res = NextResponse.next()
   // Read env at build-time (inlined by Next). Guard missing values to avoid crashes during dev/build.
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
@@ -42,6 +43,30 @@ export async function middleware(req: NextRequest) {
       }
     } else {
       console.log('Middleware: No session found, skipping refresh')
+    }
+
+    // Admin route protection: restrict /admin paths to admin users only
+    if (url.pathname.startsWith('/admin')) {
+      if (!session) {
+        const redirectUrl = new URL('/', req.url)
+        redirectUrl.searchParams.set('unauthorized', '1')
+        return NextResponse.redirect(redirectUrl)
+      }
+      try {
+        // Fetch profile to check is_admin flag (RLS should allow selecting own row)
+        const { data: profile } = await supabase.from('profiles').select('is_admin').eq('id', session.user.id).single()
+        const metaRole = (session.user.user_metadata as any)?.role
+        if (!profile?.is_admin && metaRole !== 'admin') {
+          const redirectUrl = new URL('/', req.url)
+            redirectUrl.searchParams.set('unauthorized', '1')
+          return NextResponse.redirect(redirectUrl)
+        }
+      } catch (e) {
+        console.error('Admin check failed', e)
+        const redirectUrl = new URL('/', req.url)
+        redirectUrl.searchParams.set('unauthorized', '1')
+        return NextResponse.redirect(redirectUrl)
+      }
     }
 
     // IMPORTANT: Return the response with updated cookies

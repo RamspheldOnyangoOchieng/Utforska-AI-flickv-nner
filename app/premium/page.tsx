@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Check, Shield, Lock } from "lucide-react"
+import { AdminPlanFeatures } from "@/components/admin-plan-features"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { toast } from "sonner"
@@ -20,12 +21,27 @@ interface PremiumPageContent {
   [key: string]: string
 }
 
+interface PlanFeature {
+  id: string
+  feature_key: string
+  feature_label_en: string
+  feature_label_sv: string
+  free_value_en: string
+  free_value_sv: string
+  premium_value_en: string
+  premium_value_sv: string
+  sort_order: number
+  active: boolean
+}
+
 export default function PremiumPage() {
   const [tokenPackages, setTokenPackages] = useState<TokenPackage[]>([])
   const [content, setContent] = useState<PremiumPageContent>({})
   const [isLoading, setIsLoading] = useState(false)
   const [isCheckingStatus, setIsCheckingStatus] = useState(true)
   const [statusError, setStatusError] = useState<string | null>(null)
+  const [planFeatures, setPlanFeatures] = useState<PlanFeature[]>([])
+  const [language, setLanguage] = useState<"en" | "sv">("sv")
   const router = useRouter()
   const { user } = useAuth()
   const statusCheckRef = useRef<boolean>(false)
@@ -50,6 +66,17 @@ export default function PremiumPage() {
           return acc
         }, {})
         setContent(formattedContent)
+      }
+
+      // Fetch plan features (admin configured). If none, we fall back later.
+      const { data: featuresData } = await supabase
+        .from("plan_features")
+        .select("*")
+        .eq("active", true)
+        .order("sort_order")
+
+      if (featuresData && featuresData.length) {
+        setPlanFeatures(featuresData as PlanFeature[])
       }
     }
 
@@ -366,6 +393,215 @@ export default function PremiumPage() {
         <div className="flex items-center text-muted-foreground">
           <Lock className="h-5 w-5 mr-2" />
           <span>{content.security_badge_2}</span>
+        </div>
+      </div>
+
+      {/* Feature comparison table */}
+      <div className="mt-16">
+        <h2 className="text-3xl font-bold text-center mb-6">
+          {language === "sv" ? "Jämförelse: Gratis vs Premium" : "Comparison: Free vs Premium"}
+        </h2>
+        <div className="overflow-x-auto rounded-lg border border-border">
+          <table className="min-w-full text-sm">
+            <thead className="bg-primary text-primary-foreground">
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold w-1/3">
+                  {language === "sv" ? "Funktion" : "Feature"}
+                </th>
+                <th className="text-left px-4 py-3 font-semibold w-1/3">
+                  {language === "sv" ? "Gratis" : "Free Plan"}
+                </th>
+                <th className="text-left px-4 py-3 font-semibold w-1/3">
+                  {language === "sv" ? "Premium" : "Premium Plan"}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {(planFeatures.length ? planFeatures : [
+                {
+                  feature_key: "text_messages",
+                  feature_label_en: "Text Messages",
+                  feature_label_sv: "Textmeddelanden",
+                  free_value_en: "3 free messages",
+                  free_value_sv: "3 fria meddelanden",
+                  premium_value_en: "Truly Unlimited",
+                  premium_value_sv: "Verkligt obegränsat",
+                },
+                {
+                  feature_key: "image_gen_non_nude",
+                  feature_label_en: "Image Generation (non-nude)",
+                  feature_label_sv: "Bildgenerering (icke-nakna)",
+                  free_value_en: "1 free image",
+                  free_value_sv: "1 fri bild",
+                  premium_value_en: "Unlimited / Higher Quality",
+                  premium_value_sv: "Obegränsat / Högre kvalitet",
+                },
+                {
+                  feature_key: "image_gen_nude",
+                  feature_label_en: "Image Generation (nude)",
+                  feature_label_sv: "Bildgenerering (nakna)",
+                  free_value_en: "Blurred",
+                  free_value_sv: "Suddig",
+                  premium_value_en: "Not blurred",
+                  premium_value_sv: "Inte suddig",
+                },
+                {
+                  feature_key: "receiving_images",
+                  feature_label_en: "Receiving Images",
+                  feature_label_sv: "Ta emot bilder",
+                  free_value_en: "1 free image",
+                  free_value_sv: "1 fri bild",
+                  premium_value_en: "Available",
+                  premium_value_sv: "Tillgängligt",
+                },
+                {
+                  feature_key: "receiving_videos_non_nude",
+                  feature_label_en: "Receiving Videos (non-nude)",
+                  feature_label_sv: "Ta emot videor (icke-nakna)",
+                  free_value_en: "1 free video",
+                  free_value_sv: "1 fri video",
+                  premium_value_en: "Available",
+                  premium_value_sv: "Tillgängligt",
+                },
+                {
+                  feature_key: "receiving_videos_nude",
+                  feature_label_en: "Receiving Videos (nude)",
+                  feature_label_sv: "Ta emot videor (nakna)",
+                  free_value_en: "Blurred",
+                  free_value_sv: "Suddig",
+                  premium_value_en: "Not blurred",
+                  premium_value_sv: "Inte suddig",
+                },
+                {
+                  feature_key: "response_time",
+                  feature_label_en: "Response Time",
+                  feature_label_sv: "Svarstid",
+                  free_value_en: "Slower (Lower Priority)",
+                  free_value_sv: "Långsammare (lägre prioritet)",
+                  premium_value_en: "Faster (Priority Processing)",
+                  premium_value_sv: "Snabbare (prioriterad)",
+                },
+                {
+                  feature_key: "image_blur_removal",
+                  feature_label_en: "Image Blur Removal",
+                  feature_label_sv: "Borttagning av bildsudd",
+                  free_value_en: "Not Included",
+                  free_value_sv: "Ingår ej",
+                  premium_value_en: "Automatic",
+                  premium_value_sv: "Automatisk",
+                },
+                {
+                  feature_key: "bot_memory",
+                  feature_label_en: "Bot Memory",
+                  feature_label_sv: "Bot-minne",
+                  free_value_en: "Short",
+                  free_value_sv: "Kort",
+                  premium_value_en: "Extended/Longer",
+                  premium_value_sv: "Förlängt/Längre",
+                },
+                {
+                  feature_key: "active_ai_girlfriends",
+                  feature_label_en: "Active AI Girlfriends",
+                  feature_label_sv: "Aktiva AI-flickvänner",
+                  free_value_en: "One at a Time",
+                  free_value_sv: "En åt gången",
+                  premium_value_en: "Unlimited",
+                  premium_value_sv: "Obegränsat",
+                },
+                {
+                  feature_key: "sending_photos",
+                  feature_label_en: "Sending Photos",
+                  feature_label_sv: "Skicka foton",
+                  free_value_en: "Not Available",
+                  free_value_sv: "Inte tillgängligt",
+                  premium_value_en: "Available",
+                  premium_value_sv: "Tillgängligt",
+                },
+                {
+                  feature_key: "chat_history",
+                  feature_label_en: "Chat History",
+                  feature_label_sv: "Chatt-historik",
+                  free_value_en: "Deleted after 3 days",
+                  free_value_sv: "Raderas efter 3 dagar",
+                  premium_value_en: "Never Deleted",
+                  premium_value_sv: "Aldrig raderas",
+                },
+                {
+                  feature_key: "watermark",
+                  feature_label_en: "Watermark on Images",
+                  feature_label_sv: "Vattenstämpel på bilder",
+                  free_value_en: "Yes",
+                  free_value_sv: "Ja",
+                  premium_value_en: "No",
+                  premium_value_sv: "Nej",
+                },
+                {
+                  feature_key: "support",
+                  feature_label_en: "Support",
+                  feature_label_sv: "Support",
+                  free_value_en: "Standard",
+                  free_value_sv: "Standard",
+                  premium_value_en: "Priority",
+                  premium_value_sv: "Prioriterad",
+                },
+                {
+                  feature_key: "new_feature_access",
+                  feature_label_en: "New Feature Access",
+                  feature_label_sv: "Tillgång till nya funktioner",
+                  free_value_en: "Standard",
+                  free_value_sv: "Standard",
+                  premium_value_en: "Early Access",
+                  premium_value_sv: "Tidigt tillträde",
+                },
+                {
+                  feature_key: "advanced_customization",
+                  feature_label_en: "Advanced Customization",
+                  feature_label_sv: "Avancerad anpassning",
+                  free_value_en: "Limited",
+                  free_value_sv: "Begränsad",
+                  premium_value_en: "Full",
+                  premium_value_sv: "Full",
+                },
+                {
+                  feature_key: "exclusive_features",
+                  feature_label_en: "Exclusive Premium Features",
+                  feature_label_sv: "Exklusiva premiumfunktioner",
+                  free_value_en: "No",
+                  free_value_sv: "Nej",
+                  premium_value_en: "Potential Future Additions",
+                  premium_value_sv: "Potentiella framtida tillägg",
+                },
+              ]).map((feat, i) => {
+                const isDb = !!(feat as any).id
+                const key = (feat as any).feature_key || (feat as any).id || i
+                const label = language === 'sv'
+                  ? (isDb ? (feat as any).feature_label_sv : (feat as any).feature_label_sv)
+                  : (isDb ? (feat as any).feature_label_en : (feat as any).feature_label_en)
+                const freeVal = language === 'sv'
+                  ? (isDb ? (feat as any).free_value_sv : (feat as any).free_value_sv)
+                  : (isDb ? (feat as any).free_value_en : (feat as any).free_value_en)
+                const premiumVal = language === 'sv'
+                  ? (isDb ? (feat as any).premium_value_sv : (feat as any).premium_value_sv)
+                  : (isDb ? (feat as any).premium_value_en : (feat as any).premium_value_en)
+                return (
+                  <tr key={key} className="border-t border-border hover:bg-muted/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-sm">{label}</td>
+                    <td className="px-4 py-3 text-xs sm:text-sm align-top">{freeVal}</td>
+                    <td className="px-4 py-3 text-xs sm:text-sm align-top font-semibold text-primary">{premiumVal}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-3 text-xs text-muted-foreground text-center">
+          {language === 'sv'
+            ? "Funktioner och begränsningar kan ändras. Aktuella värden styrs av administratören."
+            : "Features & limits may change. Live values are controlled by the administrator."}
+        </p>
+        {/* Admin editor */}
+        <div className="mt-10">
+          <AdminPlanFeatures />
         </div>
       </div>
     </div>

@@ -13,6 +13,7 @@ import { ErrorBoundary } from "@/components/error-boundary"
 import { LanguageProvider } from "@/components/language-context"
 import { SiteHeader } from "@/components/site-header"
 import { SiteFooter } from "@/components/site-footer"
+import { AnalyticsLoader } from "@/components/use-consent"
 
 function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const { isOpen } = useSidebar()
@@ -24,7 +25,8 @@ function RootLayoutContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-background">
       <AppSidebar />
-      <div className={`flex-1 transition-all duration-300 ease-in-out ${isOpen ? "md:ml-64" : "md:ml-16"}`}>
+    <div className={`flex-1 transition-all duration-300 ease-in-out ${isOpen ? "md:ml-64" : "md:ml-16"}`}>
+  <AnalyticsLoader />
   {showHeader && <SiteHeader />}
   <ErrorBoundary>{children}</ErrorBoundary>
   <SiteFooter />

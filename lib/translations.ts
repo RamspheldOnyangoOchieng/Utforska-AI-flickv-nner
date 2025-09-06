@@ -298,6 +298,30 @@ export type TranslationKey =
   | "imageGeneration.cancelButton"
   | "home.exploreAIGirlfriends"
   | "general.aiGirlfriends"
+  | "footer.companyDescription"
+  | "footer.contact"
+  | "footer.features.createImage"
+  | "footer.features.chat"
+  | "footer.features.createCharacter"
+  | "footer.features.gallery"
+  | "footer.features.explore"
+  | "footer.about.title"
+  | "footer.company.title"
+  | "footer.legal.termsPolicies"
+  | "footer.about.aiGirlfriendChat"
+  | "footer.about.aiSexting"
+  | "footer.about.howItWorks"
+  | "footer.about.aboutUs"
+  | "footer.about.roadmap"
+  | "footer.about.blog"
+  | "footer.about.guide"
+  | "footer.about.complaints"
+  | "footer.about.termsPolicies"
+  | "footer.company.weAreHiring"
+  | "footer.editFooter"
+  | "footer.addItem"
+  | "footer.rightsReserved"
+  | "footer.resetDefaults"
 
 export type Translations = {
   [key in TranslationKey]: string
@@ -607,13 +631,37 @@ export const translations: Record<"en" | "sv", Translations> = {
     "imageGeneration.cancelButton": "Cancel",
     "home.exploreAIGirlfriends": "Explore AI Girlfriends",
     "general.aiGirlfriends": "AI Girlfriends",
+  "footer.companyDescription": "AI Character Explorer delivers immersive experiences with AI companions that feel real, allowing users to generate images and chat.",
+  "footer.contact": "Contact",
+  "footer.features.createImage": "Create Image",
+  "footer.features.chat": "Chat",
+  "footer.features.createCharacter": "Create Character",
+  "footer.features.gallery": "Gallery",
+  "footer.features.explore": "Explore",
+  "footer.about.title": "About us",
+  "footer.company.title": "Company",
+  "footer.legal.termsPolicies": "Terms and Policies",
+  "footer.about.aiGirlfriendChat": "AI-flickvänschatt",
+  "footer.about.aiSexting": "AI-sexting",
+  "footer.about.howItWorks": "How it works",
+  "footer.about.aboutUs": "About Us",
+  "footer.about.roadmap": "Roadmap",
+  "footer.about.blog": "Blog",
+  "footer.about.guide": "Guide",
+  "footer.about.complaints": "Complaints & Content Removal",
+  "footer.about.termsPolicies": "Terms and Policies",
+  "footer.company.weAreHiring": "We're hiring",
+  "footer.editFooter": "Edit Footer",
+  "footer.addItem": "Add Item",
+  "footer.rightsReserved": "All rights reserved",
+  "footer.resetDefaults": "Reset to defaults",
   },
   sv: {
     "general.siteName": "AI Karaktärsutforskare",
     "general.welcome": "Välkommen",
     "profile.age": "Åldras",
     "general.legal": "Rättslig",
-    "general.features": "AI-flickvänner",
+  "general.features": "Funktioner",
     "general.popular": "Populär",
     "profile.hobbies": "Hobbyer",
     "profile.body": "Kropp",
@@ -911,5 +959,29 @@ export const translations: Record<"en" | "sv", Translations> = {
     "imageGeneration.cancelButton": "Avbryt",
     "home.exploreAIGirlfriends": "Utforska AI-flickvänner",
     "general.aiGirlfriends": "AI-flickvänner",
+  "footer.companyDescription": "AI Karaktärsutforskare ger uppslukande upplevelser med AI-flickvänner som känns verkliga, vilket gör att användarna kan skapa bilder och chatta.",
+  "footer.contact": "Kontakt",
+  "footer.features.createImage": "Skapa bild",
+  "footer.features.chat": "Chatta",
+  "footer.features.createCharacter": "Skapa karaktär",
+  "footer.features.gallery": "Galleri",
+  "footer.features.explore": "Utforska",
+  "footer.about.title": "Om oss",
+  "footer.company.title": "Företag",
+  "footer.legal.termsPolicies": "Villkor och Policyer",
+  "footer.about.aiGirlfriendChat": "AI-flickvänschatt",
+  "footer.about.aiSexting": "AI-sexting",
+  "footer.about.howItWorks": "Hur det fungerar",
+  "footer.about.aboutUs": "Om oss",
+  "footer.about.roadmap": "Roadmap",
+  "footer.about.blog": "Blogg",
+  "footer.about.guide": "Guide",
+  "footer.about.complaints": "Klagomål & innehållsborttagning",
+  "footer.about.termsPolicies": "Villkor och policyer",
+  "footer.company.weAreHiring": "Vi anställer",
+  "footer.editFooter": "Redigera Footer",
+  "footer.addItem": "Lägg till",
+  "footer.rightsReserved": "Alla rättigheter förbehållna",
+  "footer.resetDefaults": "Återställ standard",
   },
 }

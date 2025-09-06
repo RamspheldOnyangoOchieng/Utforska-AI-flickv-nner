@@ -11,18 +11,21 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
 export function SiteFooter() {
   const { t } = useTranslations()
   const currentYear = new Date().getFullYear()
-  const { user, isAdmin } = useAuth()
+  const { user } = useAuth()
+  // Derive admin flag if user role metadata is available
+  // @ts-ignore optional chaining depending on Supabase user structure
+  const isAdmin = user?.user_metadata?.role === 'admin' || user?.role === 'admin'
   const [isEditing, setIsEditing] = useState(false)
-  const [footerData, setFooterData] = useState({
+  const buildDefaultData = () => ({
     companyName: t("general.siteName"),
-    companyDescription: `${t("general.siteName")} ger uppslukande upplevelser med AI-flickvänner som känns verkliga, vilket gör att användarna kan skapa bilder och chatta.`,
+    companyDescription: t("footer.companyDescription"),
     contactAddress: "Dintyp",
     features: [
-      { id: 1, title: "Skapa bild", url: "/generate" },
-      { id: 2, title: "Chatta", url: "/chat" },
-      { id: 3, title: "Skapa karaktär", url: "/characters" },
-      { id: 4, title: "Galleri", url: "/collection" },
-      { id: 5, title: "Utforska", url: "/" },
+      { id: 1, title: t("footer.features.createImage"), url: "/generate" },
+      { id: 2, title: t("footer.features.chat"), url: "/chat" },
+      { id: 3, title: t("footer.features.createCharacter"), url: "/characters" },
+      { id: 4, title: t("footer.features.gallery"), url: "/collection" },
+      { id: 5, title: t("footer.features.explore"), url: "/" },
     ],
     popular: [
       { id: 1, title: t("general.siteName"), url: "/" },
@@ -30,14 +33,22 @@ export function SiteFooter() {
       { id: 3, title: "AI Anime", url: "/characters?category=anime" },
       { id: 4, title: "AI Boyfriend", url: "/characters?category=companion" },
     ],
-    legal: [{ id: 1, title: "Terms and Policies", url: "/terms" }],
+    legal: [{ id: 1, title: t("footer.legal.termsPolicies"), url: "/terms" }],
     aboutUs: [
-      { id: 1, title: "Dintyp Generator", url: "https://www.dintyp.se/generate" },
-      { id: 2, title: "Premium", url: "https://www.dintyp.se/premium" },
-      { id: 3, title: "DreamGF", url: "https://dreamgf.ai/" },
+      { id: 1, title: t("footer.about.aiGirlfriendChat"), url: "/chat" },
+      { id: 2, title: t("footer.about.aiSexting"), url: "/chat?mode=sext" },
+      { id: 3, title: t("footer.about.howItWorks"), url: "/#how-it-works" },
+      { id: 4, title: t("footer.about.aboutUs"), url: "/about" },
+      { id: 5, title: t("footer.about.roadmap"), url: "/#roadmap" },
+      { id: 6, title: t("footer.about.blog"), url: "/blog" },
+      { id: 7, title: t("footer.about.guide"), url: "/#guide" },
+      { id: 8, title: t("footer.about.complaints"), url: "/#complaints" },
+      { id: 9, title: t("footer.about.termsPolicies"), url: "/terms" },
     ],
-    company: [{ id: 1, title: "We're hiring", url: "/careers" }],
+    company: [{ id: 1, title: t("footer.company.weAreHiring"), url: "/careers" }],
   })
+
+  const [footerData, setFooterData] = useState(buildDefaultData())
   const [tempData, setTempData] = useState(footerData)
   const supabase = createClientComponentClient()
 
@@ -57,6 +68,16 @@ export function SiteFooter() {
 
     loadFooterData()
   }, [supabase])
+
+  // Rebuild default translated data when language (t reference) changes and not editing
+  useEffect(() => {
+    if (!isEditing) {
+      const rebuilt = buildDefaultData()
+      setFooterData(rebuilt)
+      setTempData(rebuilt)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t])
 
   const handleSave = async () => {
     try {
@@ -78,6 +99,18 @@ export function SiteFooter() {
   const handleCancel = () => {
     setTempData(footerData)
     setIsEditing(false)
+  }
+
+  const handleResetDefaults = async () => {
+    // Rebuild default translated data and remove stored DB row so cache clears
+    const defaults = buildDefaultData()
+    setFooterData(defaults)
+    setTempData(defaults)
+    try {
+      await supabase.from('footer_content').delete().eq('id', 1)
+    } catch (e) {
+      console.error('Error clearing footer cache', e)
+    }
   }
 
   const handleAddItem = (section: keyof typeof footerData) => {
@@ -129,13 +162,19 @@ export function SiteFooter() {
               >
                 <X size={16} /> {t("general.cancel")}
               </button>
+              <button
+                onClick={handleResetDefaults}
+                className="flex items-center gap-1 bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded-md text-sm"
+              >
+                <X size={16} /> {t('footer.resetDefaults')}
+              </button>
             </>
           ) : (
             <button
               onClick={() => setIsEditing(true)}
               className="flex items-center gap-1 bg-primary hover:bg-primary/90 text-primary-foreground px-3 py-1 rounded-md text-sm"
             >
-              <Pencil size={16} /> Edit Footer
+              <Pencil size={16} /> {t("footer.editFooter")}
             </button>
           )}
         </div>
@@ -150,7 +189,7 @@ export function SiteFooter() {
                 {t("general.siteName")}<span className="text-primary">.</span>
               </h2>
             </Link>
-            <p className="text-muted-foreground text-sm">{t("general.siteName")} ger uppslukande upplevelser som känns verkliga, vilket gör att användarna kan skapa bilder.</p>
+            <p className="text-muted-foreground text-sm">{t("footer.companyDescription")}</p>
           </div>
 
           {/* Features Section */}
@@ -167,7 +206,7 @@ export function SiteFooter() {
 
             {/* Om oss */}
             <div className="space-y-3">
-              <h3 className="text-base font-medium">Om oss</h3>
+              <h3 className="text-base font-medium">{t("footer.about.title")}</h3>
               <div className="space-y-2">
                 <Link href="https://www.dintyp.se/generate" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">Dintyp Generator</Link>
                 <Link href="https://www.dintyp.se/premium" className="block text-muted-foreground hover:text-foreground text-sm transition-colors">Premium</Link>
@@ -183,8 +222,8 @@ export function SiteFooter() {
                   <Link href="/terms" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Terms and Policies</Link>
                 </div>
                 <div>
-                  <h3 className="text-base font-medium mb-2">Företag</h3>
-                  <Link href="/careers" className="text-muted-foreground hover:text-foreground text-sm transition-colors">Vi anställer</Link>
+                  <h3 className="text-base font-medium mb-2">{t("footer.company.title")}</h3>
+                  <Link href="/careers" className="text-muted-foreground hover:text-foreground text-sm transition-colors">{t("footer.company.weAreHiring")}</Link>
                 </div>
               </div>
             </div>
@@ -204,7 +243,7 @@ export function SiteFooter() {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-base font-medium mb-2">Kontakt</h3>
+                  <h3 className="text-base font-medium mb-2">{t("footer.contact")}</h3>
                   <address className="text-muted-foreground text-xs not-italic">
                     Dintyp Inc.
                     <br />
@@ -250,7 +289,7 @@ export function SiteFooter() {
             </p>
 
             <div className="pt-4">
-              <h3 className="text-sm font-medium mb-2">Kontakt:</h3>
+              <h3 className="text-sm font-medium mb-2">{t("footer.contact") }:</h3>
               <address className="text-muted-foreground text-xs not-italic">
                 {isEditing ? (
                   <textarea
@@ -305,7 +344,7 @@ export function SiteFooter() {
               {isEditing && (
                 <li>
                   <button onClick={() => handleAddItem("features")} className="flex items-center gap-1 text-primary hover:opacity-80 text-sm">
-                    <Plus size={16} /> Add Item
+                    <Plus size={16} /> {t("footer.addItem")}
                   </button>
                 </li>
               )}
@@ -336,7 +375,7 @@ export function SiteFooter() {
               {isEditing && (
                 <li>
                   <button onClick={() => handleAddItem("legal")} className="flex items-center gap-1 text-primary hover:opacity-80 text-sm">
-                    <Plus size={16} /> Add Item
+                    <Plus size={16} /> {t("footer.addItem")}
                   </button>
                 </li>
               )}
@@ -345,7 +384,7 @@ export function SiteFooter() {
 
           {/* Om oss */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Om oss</h3>
+            <h3 className="text-lg font-medium">{t("footer.about.title")}</h3>
             <ul className="space-y-3">
               {tempData.aboutUs.map((item: any) => (
                 <li key={item.id}>
@@ -367,7 +406,7 @@ export function SiteFooter() {
               {isEditing && (
                 <li>
                   <button onClick={() => handleAddItem("aboutUs")} className="flex items-center gap-1 text-primary hover:opacity-80 text-sm">
-                    <Plus size={16} /> Add Item
+                    <Plus size={16} /> {t("footer.addItem")}
                   </button>
                 </li>
               )}
@@ -376,7 +415,7 @@ export function SiteFooter() {
 
           {/* Company */}
           <div className="space-y-4">
-            <h3 className="text-lg font-medium">Företag</h3>
+            <h3 className="text-lg font-medium">{t("footer.company.title")}</h3>
             <ul className="space-y-3">
               {tempData.company.map((item: any) => (
                 <li key={item.id}>
@@ -398,7 +437,7 @@ export function SiteFooter() {
               {isEditing && (
                 <li>
                   <button onClick={() => handleAddItem("company")} className="flex items-center gap-1 text-primary hover:opacity-80 text-sm">
-                    <Plus size={16} /> Add Item
+                    <Plus size={16} /> {t("footer.addItem")}
                   </button>
                 </li>
               )}
@@ -408,7 +447,7 @@ export function SiteFooter() {
 
         {/* Bottom */}
         <div className="mt-8 md:mt-12 pt-6 md:pt-8 border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4">
-          <div className="text-muted-foreground text-xs text-center sm:text-left">© {currentYear} Dintyp.se. Alla rättigheter förbehållna</div>
+          <div className="text-muted-foreground text-xs text-center sm:text-left">© {currentYear} Dintyp.se. {t("footer.rightsReserved")}</div>
           <div className="flex items-center space-x-4 opacity-80">
             <Image src="/visa-logo.svg" alt="Visa" width={60} height={40} className="h-6 sm:h-8 w-auto" />
             <Image src="/mastercard-logo.svg" alt="Mastercard" width={60} height={40} className="h-6 sm:h-8 w-auto" />

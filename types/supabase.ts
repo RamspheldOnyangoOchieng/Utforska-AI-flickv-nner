@@ -100,6 +100,82 @@ export interface Database {
           },
         ]
       }
+      plan_features: {
+        Row: {
+          id: string
+          feature_key: string
+          feature_label_en: string
+          feature_label_sv: string
+          free_value_en: string
+          free_value_sv: string
+          premium_value_en: string
+          premium_value_sv: string
+          sort_order: number
+          active: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Insert: {
+          id?: string
+          feature_key: string
+          feature_label_en: string
+          feature_label_sv: string
+          free_value_en: string
+          free_value_sv: string
+          premium_value_en: string
+          premium_value_sv: string
+          sort_order?: number
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          feature_key?: string
+          feature_label_en?: string
+          feature_label_sv?: string
+          free_value_en?: string
+          free_value_sv?: string
+          premium_value_en?: string
+          premium_value_sv?: string
+          sort_order?: number
+          active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      delete_feedback: {
+        Row: {
+          id: string
+          user_id?: string
+          reason?: string
+          description?: string
+          created_at?: string
+        }
+        Insert: {
+          id?: string
+          user_id?: string
+          reason?: string
+          description?: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          reason?: string
+          description?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "delete_feedback_user_id_fkey"
+            columns: ["user_id"]
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -87,7 +87,7 @@ export function ImageModal({
               src={images[currentIndex] || "/placeholder.svg"}
               alt={`Image ${currentIndex + 1}`}
               fill
-              className="object-contain rounded-2xl shadow-lg shadow-pink-500/50"
+              className="object-contain rounded-2xl shadow-lg shadow-blue-500/40"
               unoptimized // Important for external URLs
             />
           </div>
