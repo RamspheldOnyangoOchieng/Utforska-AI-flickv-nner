@@ -1,10 +1,8 @@
 import { type NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase-server"
-import { cookies } from "next/headers"
 
 export async function GET(request: NextRequest) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore);
+  const supabase = await createClient()
   const { searchParams } = new URL(request.url);
   const userId = searchParams.get("userId");
 
@@ -21,15 +19,13 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const { data, error } = await supabase.from("user_tokens").select("balance").eq("user_id", finalUserId).maybeSingle();
+    const { data, error } = await supabase.from("user_tokens").select("balance").eq("user_id", finalUserId as any).maybeSingle();
     if (error) {
-      console.error("Error fetching token balance:", error);
-      return NextResponse.json({ success: false, error: "Failed to fetch token balance" }, { status: 500 });
+      console.error("Error fetching token balance:", error)
+      return NextResponse.json({ success: false, error: "Failed to fetch token balance" }, { status: 500 })
     }
-    return NextResponse.json({
-      success: true,
-      balance: data?.balance || 0,
-    });
+    const balance = (data as any)?.balance ?? 0
+    return NextResponse.json({ success: true, balance })
   } catch (error) {
     console.error("Error fetching token balance:", error);
     return NextResponse.json({ success: false, error: "Failed to fetch token balance" }, { status: 500 });

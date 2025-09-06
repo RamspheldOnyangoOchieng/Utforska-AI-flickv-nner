@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, useMemo, useRef, type ReactNode } from "react"
 import supabase from "@/lib/supabase"
 import type { Character, CharacterInsert, CharacterUpdate } from "@/lib/types"
 import { checkTableExists, initializeDatabase, checkStorageBucket } from "@/lib/db-init"
@@ -132,9 +132,18 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
       console.log("Raw Supabase data:", JSON.stringify(data, null, 2))
 
       // Convert snake_case to camelCase
-      const formattedData = snakeToCamel(data || [])
-      console.log("Formatted character data:", JSON.stringify(formattedData, null, 2))
-      setCharacters(formattedData)
+        const formattedData = snakeToCamel(data || [])
+        // Avoid unnecessary state updates if nothing changed (shallow compare by id + length)
+        setCharacters(prev => {
+          if (prev.length === formattedData.length) {
+            const prevIds = new Set(prev.map(c => c.id))
+            const changed = formattedData.some((c: any) => !prevIds.has(c.id))
+            if (!changed) {
+              return prev // no structural change detected
+            }
+          }
+          return formattedData
+        })
     } catch (err) {
       console.error("Error fetching characters:", err)
       setError("Failed to load characters")
@@ -440,27 +449,29 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     }
   }
 
-  return (
-    <CharacterContext.Provider
-      value={{
-        characters,
-        isLoading,
-        error,
-        activeType,
-        setActiveType,
-        addCharacter,
-        updateCharacter,
-        deleteCharacter,
-        getCharacter,
-        uploadImage,
-        initDb,
-        storageBucketExists,
-        createAdminUsersTable,
-      }}
-    >
-      {children}
-    </CharacterContext.Provider>
-  )
+  const contextValue = useMemo<CharacterContextType>(() => ({
+    characters,
+    isLoading,
+    error,
+    activeType,
+    setActiveType,
+    addCharacter,
+    updateCharacter,
+    deleteCharacter,
+    getCharacter,
+    uploadImage,
+    initDb,
+    storageBucketExists,
+    createAdminUsersTable,
+  }), [
+    characters,
+    isLoading,
+    error,
+    activeType,
+    storageBucketExists,
+  ])
+
+  return <CharacterContext.Provider value={contextValue}>{children}</CharacterContext.Provider>
 }
 
 export function useCharacters() {

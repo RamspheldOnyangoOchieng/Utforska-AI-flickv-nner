@@ -24,7 +24,7 @@ async function isUserAdmin(supabase: any, userId: string) {
 export async function POST(request: NextRequest) {
   try {
     // Get the session using the route handler client
-    const supabase = createRouteHandlerClient<Database>({ cookies: () => cookies() })
+  const supabase = createRouteHandlerClient<Database>({ cookies })
 
     // Get the session
     const {

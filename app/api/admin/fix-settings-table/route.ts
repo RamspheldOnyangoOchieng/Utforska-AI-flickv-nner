@@ -5,13 +5,7 @@ import { cookies } from "next/headers"
 export async function POST(request: NextRequest) {
   try {
     // Create a Supabase client with the service role key to bypass RLS
-    const supabaseAdmin = createRouteHandlerClient(
-      { cookies: () => cookies() },
-      {
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
-        supabaseKey: process.env.SUPABASE_SERVICE_ROLE_KEY,
-      },
-    )
+  const supabaseAdmin = createRouteHandlerClient({ cookies })
 
     // SQL to fix the settings table structure
     const fixTableSQL = `

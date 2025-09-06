@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { Check, Shield, Lock } from "lucide-react"
-import { AdminPlanFeatures } from "@/components/admin-plan-features"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { toast } from "sonner"
@@ -599,10 +598,6 @@ export default function PremiumPage() {
             ? "Funktioner och begränsningar kan ändras. Aktuella värden styrs av administratören."
             : "Features & limits may change. Live values are controlled by the administrator."}
         </p>
-        {/* Admin editor */}
-        <div className="mt-10">
-          <AdminPlanFeatures />
-        </div>
       </div>
     </div>
   )

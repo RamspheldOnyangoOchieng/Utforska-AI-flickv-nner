@@ -7,7 +7,7 @@ import type { Message } from "@/lib/chat-actions"
 // Save a message to the database
 export async function saveMessage(userId: string, characterId: string, message: Message): Promise<boolean> {
   try {
-    const supabase = createRouteHandlerClient({ cookies: () => cookies() })
+  const supabase = createRouteHandlerClient({ cookies })
 
     const { error } = await supabase.from("chat_messages").insert({
       user_id: userId,
@@ -26,7 +26,7 @@ export async function saveMessage(userId: string, characterId: string, message: 
 // Get chat history for a user and character
 export async function getChatHistory(userId: string, characterId: string): Promise<Message[]> {
   try {
-    const supabase = createRouteHandlerClient({ cookies: () => cookies() })
+  const supabase = createRouteHandlerClient({ cookies })
 
     const { data, error } = await supabase
       .from("chat_messages")
@@ -57,7 +57,7 @@ export async function getChatHistory(userId: string, characterId: string): Promi
 // Clear chat history for a user and character
 export async function clearChatHistory(userId: string, characterId: string): Promise<boolean> {
   try {
-    const supabase = createRouteHandlerClient({ cookies: () => cookies() })
+  const supabase = createRouteHandlerClient({ cookies })
 
     const { error } = await supabase
       .from("chat_messages")

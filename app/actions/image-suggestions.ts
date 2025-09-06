@@ -13,7 +13,7 @@ export type ImageSuggestion = {
 }
 
 export async function getImageSuggestions(): Promise<ImageSuggestion[]> {
-  const supabase = createServerComponentClient({ cookies: async () => await cookies() })
+  const supabase = createServerComponentClient({ cookies })
 
   try {
     const { data, error } = await supabase
@@ -35,7 +35,7 @@ export async function getImageSuggestions(): Promise<ImageSuggestion[]> {
 }
 
 export async function getImageSuggestionsByCategory(category: string): Promise<ImageSuggestion[]> {
-  const supabase = createServerComponentClient({ cookies: async () => await cookies() })
+  const supabase = createServerComponentClient({ cookies })
 
   try {
     const { data, error } = await supabase

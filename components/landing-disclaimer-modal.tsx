@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { CONSENT_VERSION, POLICY_VERSION } from "@/lib/consent-config";
 import { Button } from "@/components/ui/button";
 
@@ -190,6 +190,17 @@ export default function LandingDisclaimerModal({
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const ready = ageConfirmed && termsAccepted;
+  const [showValidation, setShowValidation] = useState(false);
+
+  const ensureReady = useCallback((action: () => void) => {
+    if (!ready) {
+      // trigger validation message highlight
+      setShowValidation(true);
+      setTimeout(() => setShowValidation(false), 1600);
+      return;
+    }
+    action();
+  }, [ready]);
 
   if (!open) return null;
 
@@ -206,9 +217,9 @@ export default function LandingDisclaimerModal({
     onConfirm(finalPrefs, consent);
   };
 
-  const acceptAll = () => ready && saveAndClose({ analytics: true, marketing: true });
-  const rejectNonEssential = () => ready && saveAndClose({ analytics: false, marketing: false });
-  const saveCustom = () => ready && saveAndClose(prefs);
+  const acceptAll = () => ensureReady(() => saveAndClose({ analytics: true, marketing: true }));
+  const rejectNonEssential = () => ensureReady(() => saveAndClose({ analytics: false, marketing: false }));
+  const saveCustom = () => ensureReady(() => saveAndClose(prefs));
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
@@ -248,31 +259,34 @@ export default function LandingDisclaimerModal({
                 />
                 <span>{t.termsCheckbox}</span>
               </label>
-              {!ready && (
-                <p className="text-xs text-red-100/80 font-medium">{t.needConfirm}</p>
+              {(!ready || showValidation) && (
+                <p className={`text-xs font-medium transition-colors ${showValidation ? "text-red-200 animate-pulse" : "text-red-100/80"}`}>{t.needConfirm}</p>
               )}
             </div>
             <div className="flex flex-col lg:flex-row gap-3 mt-2">
               <div className="flex flex-1 gap-3">
                 <Button
-                  className="bg-white text-blue-600 hover:text-blue-700 font-semibold flex-1 border border-blue-200 hover:border-blue-300 shadow-sm"
+                  className="bg-white text-blue-600 hover:text-blue-700 font-semibold flex-1 border border-blue-200 hover:border-blue-300 shadow-sm pointer-events-auto"
+                  type="button"
                   onClick={() => setShowSettings(true)}
                 >
                   {t.cookieSettings}
                 </Button>
                 <Button
                   variant="destructive"
-                  className="bg-red-500 hover:bg-red-600 text-white font-semibold flex-1 shadow disabled:opacity-50"
+                  className={`bg-red-500 hover:bg-red-600 text-white font-semibold flex-1 shadow ${!ready && "opacity-60"}`}
+                  type="button"
                   onClick={rejectNonEssential}
-                  disabled={!ready}
+                  aria-disabled={!ready}
                 >
                   {t.reject}
                 </Button>
               </div>
               <Button
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold flex-1 shadow focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 disabled:opacity-50"
+                className={`bg-blue-500 hover:bg-blue-600 text-white font-semibold flex-1 shadow focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 ${!ready && "opacity-60"}`}
+                type="button"
                 onClick={acceptAll}
-                disabled={!ready}
+                aria-disabled={!ready}
               >
                 {t.confirmAll}
               </Button>
@@ -345,25 +359,28 @@ export default function LandingDisclaimerModal({
               <div className="flex flex-1 gap-3">
                 <Button
                   variant="outline"
-                  className="bg-white text-blue-600 hover:text-blue-700 font-semibold flex-1 border border-blue-200 hover:border-blue-300 shadow-sm disabled:opacity-50"
+                  className={`bg-white text-blue-600 hover:text-blue-700 font-semibold flex-1 border border-blue-200 hover:border-blue-300 shadow-sm ${!ready && "opacity-60"}`}
+                  type="button"
                   onClick={saveCustom}
-                  disabled={!ready}
+                  aria-disabled={!ready}
                 >
                   {lang === "sv" ? "Spara inställningar" : "Save preferences"}
                 </Button>
                 <Button
                   variant="destructive"
-                  className="bg-red-500 hover:bg-red-600 text-white font-semibold flex-1 shadow disabled:opacity-50"
+                  className={`bg-red-500 hover:bg-red-600 text-white font-semibold flex-1 shadow ${!ready && "opacity-60"}`}
+                  type="button"
                   onClick={rejectNonEssential}
-                  disabled={!ready}
+                  aria-disabled={!ready}
                 >
                   {t.reject}
                 </Button>
               </div>
               <Button
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold flex-1 shadow focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 disabled:opacity-50"
+                className={`bg-blue-500 hover:bg-blue-600 text-white font-semibold flex-1 shadow focus:ring-2 focus:ring-offset-2 focus:ring-blue-300 ${!ready && "opacity-60"}`}
+                type="button"
                 onClick={acceptAll}
-                disabled={!ready}
+                aria-disabled={!ready}
               >
                 {lang === "sv" ? "Acceptera alla" : "Accept all"}
               </Button>
