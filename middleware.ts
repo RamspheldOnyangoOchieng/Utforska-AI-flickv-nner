@@ -7,24 +7,18 @@ import type { Database } from '@/types/supabase'
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl
   const res = NextResponse.next()
-  // Read env at build-time (inlined by Next). Guard missing values to avoid crashes during dev/build.
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseKey) {
-    console.error(
-      "Middleware Supabase env missing. Define NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (or SUPABASE_URL/SUPABASE_ANON_KEY).",
-    )
-    return res
-  }
-
-  // Explicitly pass Supabase config to avoid reliance on env discovery in edge/middleware
-  const supabase = createMiddlewareClient<Database>({ req, res }, {
-    supabaseUrl,
-    supabaseKey,
-  })
 
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseKey) {
+      // Fail open: allow request through rather than 500
+      console.error('Middleware: Supabase env missing – skipping auth logic')
+      return res
+    }
+
+    const supabase = createMiddlewareClient<Database>({ req, res }, { supabaseUrl, supabaseKey })
     // Get the current session
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
@@ -72,8 +66,8 @@ export async function middleware(req: NextRequest) {
     // IMPORTANT: Return the response with updated cookies
     return res
   } catch (error) {
-    console.error('Middleware error:', error)
-    return res
+    console.error('Middleware fatal error (fail-open):', error)
+    return res // Never block – avoid 500 on edge
   }
 }
 
