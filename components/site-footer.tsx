@@ -23,7 +23,7 @@ export function SiteFooter() {
     features: [
       { id: 1, title: t("footer.features.createImage"), url: "/generate" },
       { id: 2, title: t("footer.features.chat"), url: "/chat" },
-      { id: 3, title: t("footer.features.createCharacter"), url: "/characters" },
+      { id: 3, title: t("footer.features.createCharacter"), url: "/create-character" },
       { id: 4, title: t("footer.features.gallery"), url: "/collection" },
       { id: 5, title: t("footer.features.explore"), url: "/" },
     ],
