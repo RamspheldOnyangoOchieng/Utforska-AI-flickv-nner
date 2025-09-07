@@ -140,7 +140,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (user?.isAdmin) {
       debouncedFetchUsers()
     }
-  }, [user])
+  }, [user?.isAdmin, user?.id])
 
   const login = async (email: string, password: string): Promise<boolean> => {
     try {

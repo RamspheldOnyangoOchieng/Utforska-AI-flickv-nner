@@ -50,11 +50,16 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  // Close sidebar on route change on mobile
+  // Close sidebar on route change on mobile and specific routes
   useEffect(() => {
     if (!isMounted.current) return
 
     if (typeof window !== "undefined" && window.innerWidth < 768) {
+      setIsOpen(false)
+    }
+    
+    // Also close sidebar when navigating to generate page
+    if (pathname === "/generate") {
       setIsOpen(false)
     }
   }, [pathname])

@@ -67,7 +67,7 @@ export function SiteFooter() {
     }
 
     loadFooterData()
-  }, [supabase])
+  }, []) // Remove supabase from dependencies
 
   // Rebuild default translated data when language (t reference) changes and not editing
   useEffect(() => {

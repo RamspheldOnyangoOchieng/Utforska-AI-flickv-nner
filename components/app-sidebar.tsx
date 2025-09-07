@@ -35,18 +35,6 @@ export default function AppSidebar() {
   const { settings } = useSite()
   const { t } = useTranslations()
 
-  useEffect(() => {
-    const handleRouteChange = () => {
-      if (typeof window !== "undefined" && window.innerWidth < 768) {
-        setIsOpen(false)
-      }
-      if (pathname === "/generate") {
-        setIsOpen(false)
-      }
-    }
-    handleRouteChange()
-  }, [pathname, setIsOpen])
-
   const isAdminPage = pathname?.startsWith("/admin")
   if (isAdminPage) {
     return null

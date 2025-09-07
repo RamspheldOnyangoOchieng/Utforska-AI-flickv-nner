@@ -143,7 +143,7 @@ export default function CollectionPage() {
       }
     }
     getUserId()
-  }, [toast])
+  }, [])
 
   useEffect(() => {
     if (userId === null) {

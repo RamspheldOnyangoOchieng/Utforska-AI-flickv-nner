@@ -18,6 +18,16 @@
 			"command": "pnpm dev",
 			"isBackground": true,
 			"group": "build"
+		},
+		{
+			"label": "Start Next.js App (npm)",
+			"type": "shell",
+			"command": "npm run dev",
+			"isBackground": true,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
 		}
 	]
 }

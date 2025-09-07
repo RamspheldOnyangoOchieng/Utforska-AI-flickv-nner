@@ -68,7 +68,7 @@ export function TokenBalanceDisplay({
         clearInterval(intervalId)
       }
     }
-  }, [user, refreshInterval])
+  }, [user?.id, refreshInterval])
 
   // Text size classes
   const textSizeClass = {

@@ -116,7 +116,7 @@ export default function PremiumPage() {
     }
 
     checkPremiumStatus()
-  }, [user])
+  }, [user?.id]) // Only depend on user ID
 
   const handleTokenPurchase = async () => {
     if (!selectedTokenPackageId) {

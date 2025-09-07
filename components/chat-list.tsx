@@ -39,9 +39,9 @@ export function ChatList() {
 
             return {
               id: character.id,
-              name: character.name || "Unknown",
-              lastMessage: lastMessage.content || "No message",
-              timestamp: lastMessage.timestamp || "Just now",
+              name: character.name || "Okänd",
+              lastMessage: lastMessage.content || "Inget meddelande",
+              timestamp: lastMessage.timestamp || "Nyss",
             }
           })
 
@@ -89,7 +89,7 @@ export function ChatList() {
     <div className="p-4 space-y-4">
       <Button variant="outline" className="w-full justify-start" onClick={handleNew}>
         <PlusCircle className="mr-2 h-4 w-4" />
-        New Chat
+        Ny Chatt
       </Button>
       <div className="space-y-2">
         {chatList.length > 0 ? (
@@ -102,7 +102,7 @@ export function ChatList() {
               )}
               onClick={() => handleSelect(chat.id)}
             >
-              <div className="truncate flex-1">{chat.name || "New Chat"}</div>
+              <div className="truncate flex-1">{chat.name || "Ny Chatt"}</div>
               <Button
                 variant="ghost"
                 size="icon"
@@ -115,7 +115,7 @@ export function ChatList() {
             </div>
           ))
         ) : (
-          <div className="text-center text-muted-foreground py-4">No chat history yet. Start a new chat!</div>
+          <div className="text-center text-muted-foreground py-4">Ingen chatthistorik än. Starta en ny chatt!</div>
         )}
       </div>
     </div>

@@ -46,7 +46,7 @@ export default function SuccessPage() {
         setMessage("Payment verification failed.");
         setErrorDetail(err.message || String(err));
       });
-  }, [sessionId, router]);
+  }, [sessionId]); // Remove router from dependencies
 
   return (
     <div className="container max-w-md py-12">

@@ -162,7 +162,7 @@ export default function SettingsPage() {
       }
     })();
     return () => { active = false };
-  }, [user]);
+  }, [user?.id]); // Only depend on user ID, not the whole user object
 
   // Save profile changes to Supabase
   const handleSave = async () => {

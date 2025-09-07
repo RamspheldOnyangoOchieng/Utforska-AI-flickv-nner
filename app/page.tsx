@@ -13,10 +13,12 @@ import Link from "next/link"
 import { useTranslations } from "@/lib/use-translations"
 import LandingDisclaimerModal from "@/components/landing-disclaimer-modal"
 import { CONSENT_VERSION, POLICY_VERSION, CONSENT_STORAGE_KEY } from "@/lib/consent-config"
+import { useConsent } from "@/components/use-consent"
 
 export default function Home() {
   const { characters, isLoading } = useCharacters()
   const { t } = useTranslations()
+  const { consent, isLoaded, updateConsent } = useConsent()
 
   // Filter characters based on the active type (case-insensitive)
   const { activeType } = useCharacters()
@@ -28,39 +30,27 @@ export default function Home() {
     return charCategory.includes(activeTypeLC)
   })
 
-  const [modalOpen, setModalOpen] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
   const [lang, setLang] = useState("sv") // or "en" based on user preference
-  const [cookiePrefs, setCookiePrefs] = useState<{analytics: boolean; marketing: boolean} | null>(null)
-  // Using centralized consent versioning
 
-  // Load saved consent, but require current version
+  // Check if consent modal should be shown based on centralized consent state
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const raw = localStorage.getItem(CONSENT_STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (parsed && parsed.timestamp && parsed.version === CONSENT_VERSION && parsed.policyVersion === POLICY_VERSION) {
-          setCookiePrefs(parsed.preferences);
-          setModalOpen(false);
-        } else {
-          // Old version or missing version -> force re-consent
-          setModalOpen(true)
-        }
-      }
-    } catch {}
-  }, [])
+    if (!isLoaded) return
+    
+    const consentVersion = consent?.version
+    const consentPolicyVersion = consent?.policyVersion
+    
+    if (!consent || consentVersion !== CONSENT_VERSION || consentPolicyVersion !== POLICY_VERSION) {
+      // No consent or outdated version -> show modal
+      setModalOpen(true)
+    } else {
+      // Valid consent exists -> hide modal
+      setModalOpen(false)
+    }
+  }, [isLoaded, consent?.version, consent?.policyVersion, consent?.timestamp])
 
-  const persist = (prefs: {analytics: boolean; marketing: boolean}, full?: any) => {
-    try {
-      const payload = full || { version: CONSENT_VERSION, policyVersion: POLICY_VERSION, timestamp: Date.now(), preferences: prefs, confirmations: { age: true, terms: true } }
-      localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(payload))
-    } catch {}
-  }
-
-  const handleConfirm = (prefs: {analytics: boolean; marketing: boolean}, full?: any) => {
-    persist(prefs, full)
-    setCookiePrefs(prefs)
+  const handleConfirm = (prefs: {analytics: boolean; marketing: boolean}) => {
+    updateConsent(prefs)
     setModalOpen(false)
   }
   const handleCookieSettings = () => { setModalOpen(true) }
@@ -229,8 +219,8 @@ export default function Home() {
         open={modalOpen}
         onConfirm={handleConfirm}
         onCookieSettings={handleCookieSettings}
-  initialPreferences={cookiePrefs || undefined}
-  lang={lang as "en" | "sv"}
+        initialPreferences={consent?.preferences}
+        lang={lang as "en" | "sv"}
       />
     </div>
   )

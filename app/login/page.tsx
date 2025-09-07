@@ -19,7 +19,7 @@ export default function LoginPage() {
         if (user) {
             router.replace(redirectTo)
         }
-    }, [user, redirectTo, router])
+    }, [user?.id, redirectTo]) // Remove router from dependencies
 
     return (
         <div className="container max-w-md mx-auto py-12 px-4">

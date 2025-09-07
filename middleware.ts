@@ -1,4 +1,4 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
+import { createClient } from '@supabase/supabase-js'
 import { NextResponse } from 'next/server'
 
 import type { NextRequest } from 'next/server'
@@ -6,7 +6,7 @@ import type { Database } from '@/types/supabase'
 
 export async function middleware(req: NextRequest) {
   const url = req.nextUrl
-  const res = NextResponse.next()
+  let res = NextResponse.next()
 
   const logs: string[] = []
   const traceId = (globalThis.crypto && 'randomUUID' in globalThis.crypto) ? (globalThis.crypto as any).randomUUID() : Math.random().toString(36).slice(2)
@@ -27,25 +27,21 @@ export async function middleware(req: NextRequest) {
       return res
     }
 
-    const supabase = createMiddlewareClient<Database>({ req, res }, { supabaseUrl, supabaseKey })
+    // Simple supabase client for middleware
+    const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    })
+
+    log('middleware-configured')
+
     // Get the current session
     const { data: { session }, error: sessionError } = await supabase.auth.getSession()
 
     if (sessionError) {
       log('session-error ' + sessionError.message)
-    }
-
-    // Only attempt to refresh if we have a session
-    if (session) {
-      const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession()
-
-      if (refreshError) {
-        log('refresh-error ' + refreshError.message)
-      } else if (refreshData?.session) {
-        log('session-refreshed')
-      }
-    } else {
-      log('no-session')
     }
 
     // Admin route protection: restrict /admin paths to admin users only
@@ -79,12 +75,15 @@ export async function middleware(req: NextRequest) {
 
     // IMPORTANT: Return the response with updated cookies
     log('end')
-    if (debug) res.headers.set('x-mw-logs', encodeURIComponent(logs.join(';')))
-    return res
-  } catch (error: any) {
-    logs.push('fatal ' + (error?.message || 'unknown'))
     if (debug) {
-      return new NextResponse(JSON.stringify({ code: 'FATAL', traceId, error: error?.message, stack: error?.stack, logs }), { status: 500, headers: { 'content-type':'application/json' } })
+      res.headers.set('x-mw-logs', encodeURIComponent(logs.join(';')))
+    }
+    return res
+    
+  } catch (error: any) {
+    log('middleware-error: ' + error.message)
+    if (debug) {
+      res.headers.set('x-mw-logs', logs.join('|'))
     }
     return res
   }

@@ -33,7 +33,7 @@ export function SubscriptionSettings() {
         }
 
         fetchSettings()
-    }, [supabase])
+    }, []) // Remove supabase from dependencies
 
     const handleToggle = async (enabled: boolean) => {
         setSubscriptionsEnabled(enabled)

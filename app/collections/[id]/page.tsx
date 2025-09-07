@@ -65,7 +65,7 @@ export default function CollectionDetailPage({ params }: { params: { id: string 
 
   useEffect(() => {
     fetchCollection()
-  }, [params.id, toast, router])
+  }, [params.id]) // Remove toast and router from dependencies
 
   const handleDownload = async (imageUrl: string, prompt: string) => {
     try {

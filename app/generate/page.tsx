@@ -66,7 +66,7 @@ export default function GenerateImagePage() {
   // Automatically close the sidebar on component mount
   useEffect(() => {
     setIsOpen(false)
-  }, [setIsOpen])
+  }, [])
 
   // Fetch suggestions on component mount
   useEffect(() => {
@@ -97,7 +97,7 @@ export default function GenerateImagePage() {
     }
 
     loadSuggestions()
-  }, [toast])
+  }, []) // Remove toast from dependencies
 
   // Handle category change
   const handleCategoryChange = async (category: string) => {
@@ -170,7 +170,7 @@ export default function GenerateImagePage() {
     if (generatedImages.length === 0) {
       savedImagesRef.current.clear()
     }
-  }, [generatedImages, user])
+  }, [generatedImages, user?.id])
 
   const handleImageClick = (index: number) => {
     setSelectedImageIndex(index)

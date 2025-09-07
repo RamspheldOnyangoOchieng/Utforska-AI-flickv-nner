@@ -54,15 +54,28 @@ export async function sendChatMessage(
       // Return a placeholder response indicating an image is being generated
       return {
         id: Math.random().toString(36).substring(2, 15),
-        content: "I'm generating an image for you. Please wait a moment...",
+        content: "Jag genererar en bild åt dig. Vänta lite...",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         isImage: true,
       }
     }
 
+    // Enhance system prompt with Swedish language instructions
+    const enhancedSystemPrompt = `${systemPrompt}
+
+VIKTIGT - SPRÅKINSTRUKTIONER:
+- Du MÅSTE alltid svara på svenska
+- Använd naturlig, vardaglig svenska
+- Anpassa dig till svensk kultur och kontext
+- Om någon skriver på engelska, svara ändå på svenska
+- Var vänlig och personlig i din ton
+- Använd svenska uttryck och ordföljd
+
+Kom ihåg att alltid kommunicera på svenska i alla dina svar.`
+
     // Format messages for the API
     const apiMessages = [
-      { role: "system", content: systemPrompt },
+      { role: "system", content: enhancedSystemPrompt },
       ...messages.map((msg) => ({
         role: msg.role,
         content: msg.content,
@@ -86,10 +99,10 @@ export async function sendChatMessage(
       }
     } catch (apiError) {
       console.error("API error:", apiError)
-      // If there's an API error, return a friendly message
+      // If there's an API error, return a friendly message in Swedish
       return {
         id: Math.random().toString(36).substring(2, 15),
-        content: "I'm having trouble connecting to my brain right now. Can we try again in a moment?",
+        content: "Jag har problem med att ansluta till mitt system just nu. Kan vi försöka igen om en stund?",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       }
     }
@@ -97,7 +110,7 @@ export async function sendChatMessage(
     console.error("Error sending chat message:", error)
     return {
       id: Math.random().toString(36).substring(2, 15),
-      content: "Sorry, I'm having trouble connecting right now. Please try again later.",
+      content: "Ursäkta, jag har problem med anslutningen just nu. Försök igen senare.",
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     }
   }

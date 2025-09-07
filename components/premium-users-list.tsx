@@ -169,7 +169,7 @@ export function PremiumUsersList() {
     }
 
     fetchPremiumUsers()
-  }, [supabase])
+  }, []) // Remove supabase from dependencies
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "N/A"

@@ -24,7 +24,7 @@ export default function Sidebar() {
     } else {
       setIsAdmin(false)
     }
-  }, [user])
+  }, [user?.isAdmin])
 
   // Fetch subscriptions enabled setting
   useEffect(() => {

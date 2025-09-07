@@ -66,7 +66,7 @@ export default function AdminSettingsPage() {
     }
 
     checkAdminAndLoadSettings()
-  }, [user, isAdmin, router, supabase])
+  }, [user?.id, isAdmin]) // Remove router and supabase from dependencies
 
   const handleSaveSettings = async () => {
     try {

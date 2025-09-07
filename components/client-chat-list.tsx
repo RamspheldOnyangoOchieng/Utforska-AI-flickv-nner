@@ -84,7 +84,7 @@ export function ClientChatList() {
                             const lastMessage = chatHistory[chatHistory.length - 1]
                             return lastMessage.content
                           }
-                          return "No messages yet"
+                          return "Inga meddelanden än"
                         })()}
                       </p>
                     </div>

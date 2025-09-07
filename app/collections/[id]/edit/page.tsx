@@ -55,7 +55,7 @@ export default function EditCollectionPage({ params }: { params: { id: string } 
 
   useEffect(() => {
     fetchCollection()
-  }, [params.id, toast, router])
+  }, [params.id]) // Remove toast and router from dependencies
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

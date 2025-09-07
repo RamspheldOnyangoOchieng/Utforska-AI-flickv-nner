@@ -116,7 +116,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
   // Automatically close the sidebar on component mount
   useEffect(() => {
     setIsOpen(false);
-  }, [setIsOpen]);
+  }, []);
 
   // Load characters with chat history
   useEffect(() => {
@@ -261,7 +261,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         const welcomeMessage: Message = {
           id: "1",
           role: "assistant",
-          content: `Hey there! I'm ${character.name}. It's great to meet you! What's your name?`,
+          content: `Hej där! Jag är ${character.name}. Så kul att träffa dig! Vad heter du?`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         }
 
@@ -279,7 +279,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         {
           id: "1",
           role: "assistant",
-          content: `Hey there! I'm ${character.name}. It's great to meet you! What's your name?`,
+          content: `Hej där! Jag är ${character.name}. Så kul att träffa dig! Vad heter du?`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         },
       ])
@@ -877,7 +877,7 @@ export default function ChatPage({ params }: { params: { id: string } }) {
         const welcomeMessage: Message = {
           id: "1",
           role: "assistant",
-          content: `Hey there! I'm ${character.name}. It's great to meet you! What's your name?`,
+          content: `Hej där! Jag är ${character.name}. Så kul att träffa dig! Vad heter du?`,
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         }
 

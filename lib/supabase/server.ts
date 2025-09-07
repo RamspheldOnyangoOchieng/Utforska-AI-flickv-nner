@@ -1,12 +1,10 @@
 import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 import { cookies } from "next/headers"
-import type { Database } from "@/types/supabase"
 
-// Factory for server components / route handlers with Next.js 15 async cookies support
-export const createClient = async () => {
+export async function createClient() {
   const cookieStore = await cookies()
-  
-  return createSupabaseClient<Database>(
+
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -17,5 +15,3 @@ export const createClient = async () => {
     }
   )
 }
-
-export { createClient as createServerClient }

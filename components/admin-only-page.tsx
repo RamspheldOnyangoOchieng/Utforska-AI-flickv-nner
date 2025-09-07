@@ -20,7 +20,7 @@ export function AdminOnlyPage({ children, title }: AdminOnlyPageProps) {
       console.log("Redirecting to login - not admin")
       router.push("/admin/login")
     }
-  }, [user, isLoading, router])
+  }, [user?.isAdmin, isLoading]) // Remove router and use specific user property
 
   if (isLoading) {
     console.log("AdminOnlyPage showing loading state")

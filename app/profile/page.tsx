@@ -18,7 +18,7 @@ export default function ProfilePage() {
     if (mounted && !isLoading && !user) {
       router.push("/login?redirect=/profile")
     }
-  }, [mounted, isLoading, user, router])
+  }, [mounted, isLoading, user?.id]) // Remove router from dependencies
 
   if (!mounted || isLoading) {
     return (

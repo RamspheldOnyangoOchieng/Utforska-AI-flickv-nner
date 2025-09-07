@@ -2,12 +2,12 @@
 
 import { useAuth } from "@/components/auth-context"
 import { useEffect, useState } from "react"
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs"
+import { createClient } from "@/lib/supabase/client"
 
 export function AdminDebug() {
-  const { user, isAdmin } = useAuth()
+  const { user } = useAuth()
   const [adminStatus, setAdminStatus] = useState<string>("Checking...")
-  const supabase = createClientComponentClient()
+  const supabase = createClient()
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -34,7 +34,7 @@ export function AdminDebug() {
     }
 
     checkAdminStatus()
-  }, [user, supabase])
+  }, [user?.id]) // Only depend on user ID, not the whole user object or supabase
 
   if (!user) return null
 
